@@ -142,7 +142,6 @@ app.get("/user", (req, res) => {
 });
 
 // Generate random data to send back to client
-// Generate random data to send back to client
 app.get("/random-data", (req, res) => {
   if (!req.user) {
     res.writeHead(401);
@@ -170,58 +169,6 @@ app.get("/random-data", (req, res) => {
   res.write(JSON.stringify({chartData: chartData, arr: arr}));
   res.end();
 })
-//app.get("/random-data", (req, res) => {
-//  if (!req.headers.authorization || !req.user) {
-//    res.writeHead(401);
-//    res.end('Unauthorized');
-//    return;
-//  }
-//  request.get(
-//    `https://${TENANT_HOST}/user`,
-//    {
-//      json: true,
-//      headers: {
-//        "User-Agent": req.headers["user-agent"],
-//        Authorization: req.headers.authorization,
-//      },
-//    },
-//    (err, response, body) => {
-//      if (err) {
-//        res.writeHead(500);
-//        res.write(err);
-//        res.end();
-//      } else if (response.statusCode !== 200) {
-//        res.writeHead(response.statusCode);
-//        res.write(body);
-//        res.end();
-//      } else if (body.tenantId !== TENANT_HOST.split(".")[0]) {
-//        res.writeHead(401);
-//        res.end('Unauthorized');
-//      } else {
-//        console.log("Generating random data...")
-//        var chartData = [];
-//        var firstDate = new Date();
-//        firstDate.setDate(firstDate.getDate() - 365);
-//        var temp = 1200;
-//        var arr = []
-//        for (var i = 0; i < 365; i++) {
-//          var newDate = new Date(firstDate);
-//          newDate.setDate(newDate.getDate() + i);
-//
-//          temp += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-//          chartData.push({
-//            date: newDate,
-//            temperature: temp
-//          });
-//          arr.push(temp)
-//        }
-//        res.writeHead(200, { "content-type": "application/json" });
-//        res.write(JSON.stringify({ chartData: chartData, arr: arr }));
-//        res.end();
-//      }
-//    }
-//  );
-//})
 
 app.use(express.json());
 const staticMW = express.static("public");
