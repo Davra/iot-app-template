@@ -1,7 +1,14 @@
 <template>
   <div class="map-wrapper">
-    <l-map :zoom="zoom" :center="center" :options="options">
-      <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+    <l-map
+      :zoom="zoom"
+      :center="center"
+      :options="options"
+    >
+      <l-tile-layer
+        :url="url"
+        :attribution="attribution"
+      ></l-tile-layer>
       <DeviceClusters />
     </l-map>
   </div>
@@ -21,7 +28,7 @@ export default {
   data() {
     return {
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      attribution: ``,
+      attribution: "",
       subdomains: ["server", "services"],
       center: latLng(0.0, 0.0),
       zoom: 3,

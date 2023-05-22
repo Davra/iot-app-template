@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-card class="ma-10" style="background-color: var(--v-secondary-base)">
+    <v-card
+      class="ma-10"
+      style="background-color: var(--v-secondary-base)"
+    >
       <v-card-title>
         <v-text-field
           flat
@@ -13,7 +16,11 @@
           @input="searchOnChange"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="primary" class="mr-4 mt-5" to="/map">
+        <v-btn
+          color="primary"
+          class="mr-4 mt-5"
+          to="/map"
+        >
           <v-icon left> mdi-map </v-icon>
           View Map of Devices
         </v-btn>
@@ -42,10 +49,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import moment from "moment";
-import axios from "axios";
 import DeviceActions from "@/components/general/DeviceActions";
+import axios from "axios";
+import moment from "moment";
+import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -136,9 +143,7 @@ export default {
       };
     },
     within24hours(lastSeen) {
-      return (
-        moment(lastSeen).valueOf() >= moment().subtract(24, "hours").valueOf()
-      );
+      return moment(lastSeen).valueOf() >= moment().subtract(24, "hours").valueOf();
     },
     checkForAlerts(uuid) {
       if (this.alerts[uuid]) {

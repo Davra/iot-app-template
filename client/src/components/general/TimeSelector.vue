@@ -9,7 +9,10 @@
       offset-y
       min-width="auto"
     >
-      <template v-if="true" v-slot:activator="{ on }">
+      <template
+        v-if="true"
+        v-slot:activator="{ on }"
+      >
         <v-text-field
           v-model="dateRangeText"
           readonly
@@ -25,13 +28,22 @@
         class="d-flex justify-space-between px-1 py-2"
         style="background-color: white"
       >
-        <v-btn text color="primary" @click="() => onClickSelectors(1)"
+        <v-btn
+          text
+          color="primary"
+          @click="() => onClickSelectors(1)"
           >24 hours</v-btn
         >
-        <v-btn text color="primary" @click="() => onClickSelectors(7)"
+        <v-btn
+          text
+          color="primary"
+          @click="() => onClickSelectors(7)"
           >7 days</v-btn
         >
-        <v-btn text color="primary" @click="() => onClickSelectors(30)"
+        <v-btn
+          text
+          color="primary"
+          @click="() => onClickSelectors(30)"
           >30 days</v-btn
         >
       </div>
@@ -45,8 +57,20 @@
         :max="maxDate"
       >
         <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-        <v-btn text color="primary" @click="onSubmit"> Save </v-btn>
+        <v-btn
+          text
+          color="primary"
+          @click="menu = false"
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          text
+          color="primary"
+          @click="onSubmit"
+        >
+          Save
+        </v-btn>
         <v-spacer></v-spacer>
       </v-date-picker>
     </v-menu>
@@ -81,18 +105,10 @@ export default {
         startDate = this.startRangeDate;
         finishDate = this.finishRangeDate;
 
-        return (
-          dayjs(startDate).format("YYYY-MM-DD HH:mm") +
-          " - " +
-          dayjs(finishDate).format("YYYY-MM-DD HH:mm")
-        );
+        return dayjs(startDate).format("YYYY-MM-DD HH:mm") + " - " + dayjs(finishDate).format("YYYY-MM-DD HH:mm");
       }
 
-      return (
-        dayjs(startDate).startOf("day").format("YYYY-MM-DD HH:mm") +
-        " - " +
-        dayjs(finishDate).endOf("day").format("YYYY-MM-DD HH:mm")
-      );
+      return dayjs(startDate).startOf("day").format("YYYY-MM-DD HH:mm") + " - " + dayjs(finishDate).endOf("day").format("YYYY-MM-DD HH:mm");
     },
     maxDate() {
       return dayjs().format("YYYY-MM-DD");
@@ -116,29 +132,20 @@ export default {
 
       const changedDates = [...datesSorted];
 
-      this.datesISOFormat = changedDates.map((date) =>
-        date.format("YYYY-MM-DD")
-      );
+      this.datesISOFormat = changedDates.map((date) => date.format("YYYY-MM-DD"));
     },
     onSelectedManually() {
       this.isSelectedManually = true;
     },
     syncDatesWithStore() {
-      const sortedDates = sortBy(this.dateRange, (date) =>
-        date.format("YYYY-MM-DD")
-      );
+      const sortedDates = sortBy(this.dateRange, (date) => date.format("YYYY-MM-DD"));
       this.startRangeDate = sortedDates[0];
       this.finishRangeDate = sortedDates[1];
-      this.datesISOFormat = sortedDates.map((date) =>
-        date.format("YYYY-MM-DD")
-      );
+      this.datesISOFormat = sortedDates.map((date) => date.format("YYYY-MM-DD"));
     },
     onSubmit() {
       const datesSorted = sortBy(this.datesISOFormat, (date) => date);
-      let dateRange = [
-        dayjs(datesSorted[0], "YYYY-MM-DD", true).startOf("day"),
-        dayjs(datesSorted[1], "YYYY-MM-DD", true).endOf("day"),
-      ];
+      let dateRange = [dayjs(datesSorted[0], "YYYY-MM-DD", true).startOf("day"), dayjs(datesSorted[1], "YYYY-MM-DD", true).endOf("day")];
 
       if (!this.isSelectedManually) {
         dateRange = [this.startRangeDate, this.finishRangeDate];

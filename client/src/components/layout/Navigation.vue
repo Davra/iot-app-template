@@ -15,11 +15,18 @@
       ></v-app-bar-nav-icon>
       <template v-if="!shortView">
         <div class="navigation-logo">
-          <img src="@/assets/davra-logo.png" height="30px" class="mt-2" />
+          <img
+            src="@/assets/davra-logo.png"
+            height="30px"
+            class="mt-2"
+          />
         </div>
       </template>
     </div>
-    <v-list nav class="pl-0 pr-0">
+    <v-list
+      nav
+      class="pl-0 pr-0"
+    >
       <v-list-item-group v-if="menuItems">
         <template v-for="(menuItem, i) in menuItems">
           <v-list-item
@@ -43,22 +50,46 @@
       </v-list-item-group>
     </v-list>
     <template v-slot:append>
-      <div class="pa-2" v-show="!shortView">
-        <v-btn block class="black--text" color="white" @click="logout()">
+      <div
+        class="pa-2"
+        v-show="!shortView"
+      >
+        <v-btn
+          block
+          class="black--text"
+          color="white"
+          @click="logout()"
+        >
           Logout
         </v-btn>
       </div>
-      <div class="pa-2" v-show="!shortView">
+      <div
+        class="pa-2"
+        v-show="!shortView"
+      >
         <a
           href="https://help.davra.com"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <v-btn block color="primary"> Help </v-btn>
+          <v-btn
+            block
+            color="primary"
+          >
+            Help
+          </v-btn>
         </a>
       </div>
-      <div class="pa-2" v-show="shortView">
-        <v-btn fab small class="logout-button mb-4" @click="logout()">
+      <div
+        class="pa-2"
+        v-show="shortView"
+      >
+        <v-btn
+          fab
+          small
+          class="logout-button mb-4"
+          @click="logout()"
+        >
           <v-icon class="icon"> mdi-logout </v-icon>
         </v-btn>
         <a
@@ -66,7 +97,11 @@
           target="_blank"
           rel="noopener noreferrer"
         >
-          <v-btn fab small class="help-button">
+          <v-btn
+            fab
+            small
+            class="help-button"
+          >
             <v-icon class="icon"> mdi-help-circle </v-icon></v-btn
           ></a
         >

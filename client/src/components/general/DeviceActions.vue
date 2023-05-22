@@ -1,6 +1,10 @@
 <template>
   <v-row justify="start">
-    <v-dialog v-model="editDialog" persistent max-width="600px">
+    <v-dialog
+      v-model="editDialog"
+      persistent
+      max-width="600px"
+    >
       <template v-slot:activator="{ on, attrs }">
         <v-icon
           v-if="editPermission"
@@ -50,7 +54,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="editDialog = false">
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="editDialog = false"
+          >
             Cancel
           </v-btn>
           <v-btn
@@ -64,9 +72,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="deleteDialog" persistent max-width="600px">
+    <v-dialog
+      v-model="deleteDialog"
+      persistent
+      max-width="600px"
+    >
       <template v-slot:activator="{ on, attrs }">
-        <v-icon v-if="deletePermission" small v-bind="attrs" v-on="on">
+        <v-icon
+          v-if="deletePermission"
+          small
+          v-bind="attrs"
+          v-on="on"
+        >
           mdi-delete
         </v-icon>
       </template>
@@ -74,12 +91,14 @@
         <v-card-title>
           <span class="text-h5">Delete Device</span>
         </v-card-title>
-        <v-card-text>
-          Are you sure you want to delete this device?
-        </v-card-text>
+        <v-card-text> Are you sure you want to delete this device? </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="deleteDialog = false">
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="deleteDialog = false"
+          >
             Cancel
           </v-btn>
           <v-btn
@@ -124,18 +143,14 @@ export default {
   methods: {
     ...mapActions(["getDevices"]),
     async editDevice() {
-      const res = await axios
-        .put(`api/v1/devices/${this.deviceCopy.UUID}`, this.deviceCopy)
-        .catch((err) => console.log(err));
+      const res = await axios.put(`api/v1/devices/${this.deviceCopy.UUID}`, this.deviceCopy).catch((err) => console.log(err));
       if (res !== undefined && res.status === 200) {
         this.getDevices();
       }
       this.editDialog = false;
     },
     async deleteDevice() {
-      const res = await axios
-        .delete(`api/v1/devices/${this.deviceCopy.UUID}`)
-        .catch((err) => console.log(err));
+      const res = await axios.delete(`api/v1/devices/${this.deviceCopy.UUID}`).catch((err) => console.log(err));
       if (res !== undefined && res.status === 200) {
         this.getDevices();
       }

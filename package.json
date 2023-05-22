@@ -1,22 +1,41 @@
 {
-    "name": "microservice",
-    "version": "1.0.0",
-    "description": "connecthing.io microservice",
-    "main": "index.js",
-    "scripts": {
-        "start": "sh start.sh",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "connecthing.io",
-    "license": "ISC",
-    "dependencies": {
-        "cookie-parser": "^1.4.6",
-        "dotenv": "^16.0.3",
-        "express": "^4.17.1",
-        "express-session": "^1.17.2",
-        "moment-timezone": "^0.5.32",
-        "passport": "^0.5.2",
-        "passport-oauth2": "^1.6.1",
-        "request": "^2.88.2"
-    }
+  "name": "microservice",
+  "version": "1.0.0",
+  "description": "Davra IOT Microservice",
+  "main": "index.js",
+  "scripts": {
+    "start": "sh start.sh",
+    "nuke": "npm i -g rimraf@3 && rimraf dist/ node_modules/ package-lock.json",
+    "test": "jest",
+    "lint": "eslint . --ext .js --fix",
+    "format": "prettier .  --write"
+  },
+  "engines": {
+    "npm": ">=8.0.0 <9.0.0",
+    "node": ">=12 <17"
+  },
+  "author": "connecthing.io",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "moment-timezone": "^0.5.32",
+    "passport": "^0.5.2",
+    "passport-oauth2": "^1.6.1",
+    "axios": "^0.27.2",
+    "axios-logger": "^2.6.2",
+    "body-parser": "^1.20.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.7",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.2.0",
+    "express-session": "^1.17.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1",
+    "sisyphus": "git+https://github.com/Davra/sisyphus.git"
+  }
 }

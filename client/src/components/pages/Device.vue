@@ -1,13 +1,23 @@
 <template>
   <div>
-    <v-toolbar color="secondary" dark flat>
+    <v-toolbar
+      color="secondary"
+      dark
+      flat
+    >
       <v-toolbar-title class="ml-8 text-h5">{{ device.name }}</v-toolbar-title>
 
       <template v-slot:extension>
-        <v-tabs v-model="tab" align-with-title>
+        <v-tabs
+          v-model="tab"
+          align-with-title
+        >
           <v-tabs-slider></v-tabs-slider>
 
-          <v-tab v-for="item in items" :key="item">
+          <v-tab
+            v-for="item in items"
+            :key="item"
+          >
             {{ item }}
           </v-tab>
         </v-tabs>
@@ -51,9 +61,7 @@ export default {
   computed: {
     ...mapState({
       device: function (state) {
-        return state.devices.find(
-          (device) => device.UUID === this.$route.params.deviceUUID
-        );
+        return state.devices.find((device) => device.UUID === this.$route.params.deviceUUID);
       },
     }),
     formatTime() {
@@ -62,4 +70,3 @@ export default {
   },
 };
 </script>
-

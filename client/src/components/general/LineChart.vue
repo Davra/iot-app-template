@@ -8,8 +8,18 @@
           v-model="metric"
           outlined
         >
-          <option value="" disabled selected>Select metric</option>
-          <option v-for="metric in metricLabels" :value="metric" :key="metric">
+          <option
+            value=""
+            disabled
+            selected
+          >
+            Select metric
+          </option>
+          <option
+            v-for="metric in metricLabels"
+            :value="metric"
+            :key="metric"
+          >
             {{ metric }}
           </option>
         </select>
@@ -72,9 +82,7 @@ export default {
       return;
     },
     getMetricName(label) {
-      const selectedMetric = this.metrics.find(
-        (metric) => metric.label === label
-      );
+      const selectedMetric = this.metrics.find((metric) => metric.label === label);
       this.metricName = selectedMetric.name;
     },
     updateGraphs() {
@@ -85,13 +93,7 @@ export default {
     },
     async generateCharts() {
       let chart = am4core.create("chartdiv", am4charts.XYChart);
-      let data = await queryDeviceData(
-        this.isSingleDaySelected,
-        this.device,
-        this.dateRange[0].startOf("hour").valueOf(),
-        this.dateRange[1].endOf("hour").valueOf(),
-        this.metricName
-      );
+      let data = await queryDeviceData(this.isSingleDaySelected, this.device, this.dateRange[0].startOf("hour").valueOf(), this.dateRange[1].endOf("hour").valueOf(), this.metricName);
 
       chart.data = data;
       let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -139,7 +141,6 @@ export default {
   background-color: white;
   padding: 0 px;
   border: 2px solid transparent;
-  border-color: var(--v-secondary-base) var(--v-secondary-base)
-    var(--v-secondary-base) var(--v-secondary-base);
+  border-color: var(--v-secondary-base) var(--v-secondary-base) var(--v-secondary-base) var(--v-secondary-base);
 }
 </style>

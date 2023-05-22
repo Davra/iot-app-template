@@ -1,13 +1,23 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="12" sm="6">
+      <v-col
+        cols="12"
+        sm="6"
+      >
         <h1 class="mt-10 ml-10"><v-icon large>mdi-database</v-icon> Data</h1>
       </v-col>
-      <v-col cols="12" sm="6" align="right">
+      <v-col
+        cols="12"
+        sm="6"
+        align="right"
+      >
         <TimeSelector />
       </v-col>
-      <v-col cols="12" sm="12">
+      <v-col
+        cols="12"
+        sm="12"
+      >
         <div class="mx-10 my-2">
           <v-card flat>
             <v-card-title class="primary--text">
@@ -17,7 +27,13 @@
                 v-model="metric"
                 outlined
               >
-                <option value="" disabled selected>Select metric</option>
+                <option
+                  value=""
+                  disabled
+                  selected
+                >
+                  Select metric
+                </option>
                 <option
                   v-for="metric in metricLabels"
                   :value="metric"
@@ -78,18 +94,11 @@ export default {
       return;
     },
     getMetricName(label) {
-      const selectedMetric = this.metrics.find(
-        (metric) => metric.label === label
-      );
+      const selectedMetric = this.metrics.find((metric) => metric.label === label);
       this.metricName = selectedMetric.name;
     },
     async getIoTData() {
-      let data = await queryDeviceAverageData(
-        this.device,
-        this.dateRange[0].startOf("hour").valueOf(),
-        this.dateRange[1].endOf("hour").valueOf(),
-        this.metricName
-      );
+      let data = await queryDeviceAverageData(this.device, this.dateRange[0].startOf("hour").valueOf(), this.dateRange[1].endOf("hour").valueOf(), this.metricName);
       console.log(data);
       if (data.length >= 1) {
         this.cardText = `Average value for ${this.metric}: ${data[0].metric_value}`;
@@ -108,7 +117,6 @@ export default {
   background-color: white;
   padding: 0 px;
   border: 2px solid transparent;
-  border-color: var(--v-secondary-base) var(--v-secondary-base)
-    var(--v-secondary-base) var(--v-secondary-base);
+  border-color: var(--v-secondary-base) var(--v-secondary-base) var(--v-secondary-base) var(--v-secondary-base);
 }
 </style>

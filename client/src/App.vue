@@ -1,14 +1,14 @@
 <template>
-    <router-view/>
+  <router-view />
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 import * as am4core from "@amcharts/amcharts4/core";
 export default {
-  name: 'App',
+  name: "App",
 
   data: () => ({}),
-  created: async function (){
+  created: async function () {
     await this.getRandomData();
     await this.getUser();
     await this.editPermission();
@@ -16,11 +16,9 @@ export default {
     await this.initStore();
     am4core.options.commercialLicense = true;
   },
-  computed: {
-  },
+  computed: {},
   methods: {
-    ...mapActions(['initStore', 'getUser', 'deletePermission', 'editPermission', 'getRandomData'])
+    ...mapActions(["initStore", "getUser", "deletePermission", "editPermission", "getRandomData"]),
   },
 };
-
 </script>

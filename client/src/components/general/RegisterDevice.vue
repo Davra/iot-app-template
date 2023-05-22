@@ -1,8 +1,17 @@
 <template>
   <v-row justify="end">
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="600px"
+    >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="white" class="mr-10" v-bind="attrs" v-on="on">
+        <v-btn
+          color="white"
+          class="mr-10"
+          v-bind="attrs"
+          v-on="on"
+        >
           <v-icon left> mdi-plus </v-icon>
           Register a new device
         </v-btn>
@@ -44,7 +53,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialog = false">
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="dialog = false"
+          >
             Cancel
           </v-btn>
           <v-btn
@@ -78,9 +91,7 @@ export default {
         serialNumber: this.serialNumber,
         description: this.description,
       };
-      const res = await axios
-        .post("api/v1/devices", device)
-        .catch((err) => console.log(err));
+      const res = await axios.post("api/v1/devices", device).catch((err) => console.log(err));
       if (res !== undefined && res.status === 200) {
         await this.getDevices();
       }

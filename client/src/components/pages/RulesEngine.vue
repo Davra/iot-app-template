@@ -1,6 +1,9 @@
 <template>
   <div class="page-wrap">
-    <v-banner single-line color="secondary">
+    <v-banner
+      single-line
+      color="secondary"
+    >
       <h1 class="my-8">Rules Engine</h1>
     </v-banner>
     <div class="rules-table">
@@ -14,16 +17,36 @@
             method="post"
             :action="`${baseUrl}/ui/login`"
           >
-            <input type="hidden" name="loginusername" :value="username" />
-            <input type="hidden" name="loginpassword" :value="password" />
-            <input type="hidden" name="username" :value="username" />
-            <input type="hidden" name="password" :value="password" />
+            <input
+              type="hidden"
+              name="loginusername"
+              :value="username"
+            />
+            <input
+              type="hidden"
+              name="loginpassword"
+              :value="password"
+            />
+            <input
+              type="hidden"
+              name="username"
+              :value="username"
+            />
+            <input
+              type="hidden"
+              name="password"
+              :value="password"
+            />
             <input
               type="hidden"
               name="onsuccess"
               :value="`/ui/rules-engine.html?embedded=true`"
             />
-            <input type="hidden" name="Submit" value="submit" />
+            <input
+              type="hidden"
+              name="Submit"
+              value="submit"
+            />
           </form>
         </div>
         <div style="overflow: hidden">

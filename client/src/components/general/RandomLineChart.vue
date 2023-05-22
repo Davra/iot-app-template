@@ -53,14 +53,8 @@ export default {
       this.generateCharts();
     },
     generateChartData() {
-      if (
-        this.randomData.arr !== undefined &&
-        this.randomData.chartData !== undefined
-      ) {
-        this.average = (
-          this.randomData.arr.reduce((a, b) => a + b, 0) /
-          this.randomData.arr.length
-        ).toFixed(3);
+      if (this.randomData.arr !== undefined && this.randomData.chartData !== undefined) {
+        this.average = (this.randomData.arr.reduce((a, b) => a + b, 0) / this.randomData.arr.length).toFixed(3);
         return this.randomData.chartData;
       } else {
         return [];
