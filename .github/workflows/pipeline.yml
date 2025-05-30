@@ -1,0 +1,111 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - release
+
+env:
+  REGION: ${{ secrets.REGION }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}
+  BUILD_NUMBER: ${{ github.run_number }}
+  SECRET: ${{ secrets.SECRET }}
+  HOST: ${{ secrets.HOST }}
+  TENANTID: ${{ secrets.TENANTID }}
+  SERVICE: ${{ secrets.SERVICE }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      DAVRA_CRED: ${{ secrets.DAVRA_CRED }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        working-directory: client
+        run: npm install
+
+      - name: Build VueJS App
+        working-directory: client
+        run: npm run build
+
+      - name: Build Docker image
+        run: |
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REGISTRY_NAME:$BUILD_NUMBER .
+
+      - name: Login to AWS ECR
+        run: |
+          aws ecr get-login-password --region $REGION \
+            | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REGISTRY_NAME:$BUILD_NUMBER
+          docker rmi -f $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REGISTRY_NAME:$BUILD_NUMBER || true
+          docker rmi -f $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REGISTRY_NAME:latest || true
+
+      - name: Start ECR scan and check for vulnerabilities
+        run: |
+          set -e
+          aws ecr start-image-scan \
+            --region $REGION \
+            --repository-name $REGISTRY_NAME \
+            --image-id imageTag=$BUILD_NUMBER \
+            --output json > ecr_start_scan.json
+
+          aws ecr wait image-scan-complete \
+            --region $REGION \
+            --repository-name $REGISTRY_NAME \
+            --image-id imageTag=$BUILD_NUMBER
+
+          aws ecr describe-image-scan-findings \
+            --region $REGION \
+            --repository-name $REGISTRY_NAME \
+            --image-id imageTag=$BUILD_NUMBER \
+            --output json > ecr_scan_result.json
+
+          CRITICAL=$(jq '.imageScanFindings.findings[] | select(.severity == "CRITICAL")' ecr_scan_result.json)
+          HIGH=$(jq '.imageScanFindings.findings[] | select(.severity == "HIGH")' ecr_scan_result.json)
+          if [[ -n "$CRITICAL" || -n "$HIGH" ]]; then
+            echo "CRITICAL or HIGH vulnerabilities found."
+            exit 1
+          fi
+
+      - name: Update Davra service config
+        run: |
+          curl -X PATCH "https://${TENANTID}.davra.com/api/v1/serviceadmin/${SERVICE}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $DAVRA_CRED" \
+            -d '{
+              "config.dockerImage": "'$AWS_ACCOUNT_ID'.dkr.ecr.'$REGION'.amazonaws.com/'$REGISTRY_NAME':'$BUILD_NUMBER'",
+              "config.dockerRegistrySecret": "'$SECRET'"
+            }'
+
+      - name: Wait for Davra container to run
+        run: |
+          for i in {1..10}; do
+            sleep 120
+            RESPONSE=$(curl -s -H "Authorization: Bearer $DAVRA_CRED" \
+              "https://${TENANTID}.davra.com/api/v1/serviceadmin/${SERVICE}/status")
+
+            IMAGE="$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REGISTRY_NAME:$BUILD_NUMBER"
+            RUNNING=$(echo "$RESPONSE" | jq -r --arg IMAGE "$IMAGE" '
+              .pods[].status.containerStatuses[] |
+              select(.image == $IMAGE and .state.running != null) | .image')
+
+            if [[ -n "$RUNNING" ]]; then
+              echo "Container is running."
+              break
+            fi
+
+            if [[ $i -eq 10 ]]; then
+              echo "Container failed to run in time."
+              exit 1
+            fi
+          done
