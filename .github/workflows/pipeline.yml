@@ -11,7 +11,6 @@ env:
   REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}
   BUILD_NUMBER: ${{ github.run_number }}
   SECRET: ${{ secrets.SECRET }}
-  HOST: ${{ secrets.HOST }}
   TENANTID: ${{ secrets.TENANTID }}
   SERVICE: ${{ secrets.SERVICE }}
 
@@ -38,6 +37,13 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REGISTRY_NAME:$BUILD_NUMBER .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.REGION }}
 
       - name: Login to AWS ECR
         run: |
@@ -79,6 +85,12 @@ jobs:
 
       - name: Update Davra service config
         run: |
+          SERVICE_CONFIG=$(curl "https://${TENANTID}.davra.com/api/v1/serviceadmin/${SERVICE}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $DAVRA_CRED")
+          PREV_IMAGE=$(echo "$SERVICE_CONFIG" | jq '.[0].config.dockerImage')
+          echo "PREVIOUS_IMAGE=$PREV_IMAGE" >> "$GITHUB_ENV"
+          
           curl -X PATCH "https://${TENANTID}.davra.com/api/v1/serviceadmin/${SERVICE}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $DAVRA_CRED" \
@@ -89,8 +101,9 @@ jobs:
 
       - name: Wait for Davra container to run
         run: |
+          sleep 60
           for i in {1..10}; do
-            sleep 120
+            sleep 10
             RESPONSE=$(curl -s -H "Authorization: Bearer $DAVRA_CRED" \
               "https://${TENANTID}.davra.com/api/v1/serviceadmin/${SERVICE}/status")
 
@@ -105,7 +118,14 @@ jobs:
             fi
 
             if [[ $i -eq 10 ]]; then
-              echo "Container failed to run in time."
+              echo "Container failed to run in time. Rolling back to previous image."
+              curl -X PATCH "https://${TENANTID}.davra.com/api/v1/serviceadmin/${SERVICE}" \
+                -H "Content-Type: application/json" \
+                -H "Authorization: Bearer $DAVRA_CRED" \
+                -d '{
+                  "config.dockerImage": ${{ env.PREVIOUS_IMAGE }},
+                  "config.dockerRegistrySecret": "'$SECRET'"
+                }'
               exit 1
             fi
           done
